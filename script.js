@@ -91,11 +91,9 @@ function Player(x, y) {
             return;
         }
 
-        if (this.x == W - 2 && this.y == H - 2) {
-            clearInterval(timer);
-            status = GAMECLEAR;
-            document.getElementById("bgm").pause();
-            repaint();
+        if (this.x === W - 2 && this.y === H - 2) {
+            endGame(GAMECLEAR);
+            return;
         }
 
         this.dx = 0;
@@ -134,10 +132,8 @@ function Alien(x, y) {
         let diffX = Math.abs(player.getScrollX() - this.getScrollX());
         let diffY = Math.abs(player.getScrollY() - this.getScrollY());
         if (diffX <= 30 && diffY <= 30) {
-            clearInterval(timer);
-            status = GAMEOVER;
-            document.getElementById("bgm").pause();
-            repaint();
+            endGame(GAMEOVER);
+            return;
         }
 
         let gapx = player.x - this.x;
@@ -166,6 +162,41 @@ function Alien(x, y) {
 
 function random (v) {
     return Math.floor(Math.random() * v);
+}
+
+function endGame(nextStatus) {
+    if (status !== 0) return;
+
+    status = nextStatus;
+    keyCode = 0;
+
+    clearInterval(timer);
+
+    const bgm = document.getElementById("bgm");
+    if (bgm) {
+        bgm.pause();
+    }
+
+    repaint();
+}
+
+function drawEndMessage(text) {
+    ctx.save();
+
+    // 拡大縮小の影響を受けないように、実際のcanvasサイズで描く
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+    ctx.fillStyle = "rgba(0, 0, 0, 0.65)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = "yellow";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.font = `bold ${Math.max(28, canvas.width * 0.08)}px sans-serif`;
+
+    ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+
+    ctx.restore();
 }
 
 function init() {
@@ -197,12 +228,19 @@ function go() {
 }
 
 function tick() {
+    if (status !== 0) return;
+
     frame++;
+
     player.update();
-    repaint();
-    if (frame % 2 == 0) {
+    if (status !== 0) return;
+
+    if (frame % 2 === 0) {
         aliens.forEach((a) => a.update());
+        if (status !== 0) return;
     }
+
+    repaint();
 }
 
 function createMaze(w, h) {
@@ -317,12 +355,12 @@ function repaint() {
     drawCircle(ax, ay, 30, "yellow");
 
     player.paint(ctx, 300, 300, 50, 50);
-    ctx.fillStyle = "yellow";
-    if (status == GAMEOVER) {
-        ctx.fillText("GAME OVER", 150, 200);
-    } else if (status == GAMECLEAR) {
-        ctx.fillText("GAME CLEAR", 150, 200);
-    };
+
+    if (status === GAMEOVER) {
+        drawEndMessage("GAME OVER");
+    } else if (status === GAMECLEAR) {
+        drawEndMessage("GAME CLEAR");
+    }
 }
 
 function mykeydown(e) {
