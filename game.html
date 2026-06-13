@@ -6,8 +6,13 @@
     <title>ダンジョン</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Sniglet:wght@400;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=New+Tegomin&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --font-title: "New Tegomin", "Noto Serif JP", serif;
+            --font-body: "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Hiragino Sans", sans-serif;
+        }
+
         html, body {
             margin: 0;
             padding: 0;
@@ -32,7 +37,7 @@
             justify-content: center;
 
             font-size: 20px;
-            font-family: 'Sniglet', cursive;
+            font-family: 'Noto Sans JP', sans-serif;
         }
 
         #maze {
@@ -90,7 +95,7 @@
 </head>
 <body>
     <div class="header">
-        <span id="description">ダンジョンへようこそ！<br>敵を避けつつ右下まで進め！</span>
+        <span id="description"></span>
     </div>
     <main>
         <canvas id="maze"></canvas>
