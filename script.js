@@ -260,7 +260,7 @@ function repaint() {
     ctx.arc(300, 300, 300, 0, Math.PI * 2);
     ctx.clip();
 
-    ctx.fillStyle = "brown";
+    ctx.fillStyle = "#adb5b8";
     ctx.translate(6 * 50, 6 * 50);
     ctx.translate(-1 * player.getScrollX(), -1 * player.getScrollY());
     for (let x = 0; x < W; x++) {
@@ -278,7 +278,7 @@ function repaint() {
 
     ctx.save();
     ctx.translate(670, 300);
-    ctx.fillStyle = "brown";
+    ctx.fillStyle = "#333";
     for (let x = 0; x < W; x++) {
         for (let y = 0; y < H; y++) {
             if (maze[y][x] == 1) {
