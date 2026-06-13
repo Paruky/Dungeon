@@ -29,24 +29,29 @@ const BASE_WIDTH = 900;
 const BASE_HEIGHT = 600;
 
 window.addEventListener("load", () => {
-    init();
+
     canvas = document.getElementById("maze");
+
     width = window.innerWidth;
     height = window.innerHeight;
+
     div1 = document.getElementsByClassName("header")[0];
     div2 = document.getElementsByClassName("footer")[0];
-    
-    if (width < 600) {
-        canvasSize = width;
-    }
-    
+
+    canvasSize = Math.min(width, 900);
+
     canvas.width = canvasSize;
-    canvas.height = canvasSize;
-    
-    div1.style.height = (height - canvasSize) / 2 + "px";
-    div2.style.height = (height - canvasSize) / 2 + "px";
+    canvas.height = Math.floor(canvasSize * (BASE_HEIGHT / BASE_WIDTH));
+
+    let remain = height - canvas.height;
+
+    div1.style.height = remain / 2 + "px";
+    div2.style.height = remain / 2 + "px";
+
     div1.style.width = canvasSize + "px";
     div2.style.width = canvasSize + "px";
+
+    init();
 });
 
 function Scroller() {
@@ -194,11 +199,10 @@ function go() {
 function tick() {
     frame++;
     player.update();
-    aliens.forEach((a) => a.update());
     repaint();
-    // if (frame % 2 == 0) {
-        
-    // }
+    if (frame % 2 == 0) {
+        aliens.forEach((a) => a.update());
+    }
 }
 
 function createMaze(w, h) {
@@ -235,8 +239,21 @@ function drawCircle(x, y, r, color) {
 }
 
 function repaint() {
+
+    // 毎フレーム倍率リセット
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+    // canvas全体クリア
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // 900x600を現在サイズに合わせて拡大縮小
+    const scaleX = canvas.width / BASE_WIDTH;
+    const scaleY = canvas.height / BASE_HEIGHT;
+
+    ctx.scale(scaleX, scaleY);
+    ctx.font = "bold 48px sans-serif";
     ctx.fillStyle = "black";
-    ctx.fillRect(0, 0, 900, 600);
+    ctx.fillRect(0, 0, BASE_WIDTH, BASE_HEIGHT);
 
     ctx.save();
     ctx.beginPath();
@@ -314,11 +331,28 @@ function mykeydown(e) {
 function mykeyup(e) {
     keyCode = 0;
 }
+
 function mymousedown(e) {
-    let x = !isNaN(e.offsetX) ? e.offsetX : e.touches[0].clientX;
-    let y = !isNaN(e.offsetY) ? e.offsetY : e.touches[0].clientY;
+
+    const rect = canvas.getBoundingClientRect();
+
+    let x;
+    let y;
+
+    if (e.touches) {
+        x = e.touches[0].clientX - rect.left;
+        y = e.touches[0].clientY - rect.top;
+    } else {
+        x = e.offsetX;
+        y = e.offsetY;
+    }
+
+    // 900x600基準へ変換
+    x *= BASE_WIDTH / canvas.width;
+    y *= BASE_HEIGHT / canvas.height;
 
     if (670 < x && x < 870 && 70 < y && y < 270) {
+
         x -= 770;
         y -= 170;
 
