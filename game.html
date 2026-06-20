@@ -77,22 +77,39 @@
               -1.5px 0 0 #000, 1.5px 0 0 #000;
         }
         body {
-    margin: 0;
-    background: black;
+            margin: 0;
+            background: black;
 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
 
-    height: 100vh;
-}
+            height: 100vh;
+        }
 
-#maze {
-    width: min(100vw, 900px);
-    aspect-ratio: 3 / 2;
+        #maze {
+            width: min(100vw, 900px);
+            aspect-ratio: 3 / 2;
 
-    display: block;
-}
+            display: block;
+        }
+        #dungeon-1, #dungeon-2, #dungeon-3 {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            display: block;
+            width: min(100vw, 900px);
+            aspect-ratio: 2/1;
+        }
+        @keyframes zoomInOut {
+            0%, 100% {
+                transform: scale(1.0); /* 元のサイズ */
+            }
+            80% {
+                transform: scale(1.3); /* 1.3倍に拡大 */
+            }
+        }
     </style>
 </head>
 <body>
@@ -101,7 +118,10 @@
     </div>
     <main>
         <canvas id="maze"></canvas>
-        <img src="start.png" id="START" onclick="go()"><br>
+        <img src="dungeon-1.PNG" id="dungeon-1" style="opacity: 0;">
+        <img src="dungeon-2.PNG" id="dungeon-2" style="opacity: 0;">
+        <img src="dungeon-3.PNG" id="dungeon-3" style="opacity: 0;">
+        <img src="start.png" id="START" style="opacity: 0;"><br>
         <img src="arrows.png" id="arrows" style="display: none;">
         <img src="hero0.png" id="hero0" style="display: none;">
         <img src="hero1.png" id="hero1" style="display: none;">
@@ -116,5 +136,56 @@
         <span>Dungeon</span>
     </div>
     <script src="script.js"></script>
+    <script>
+        const dungeon1 = document.getElementById("dungeon-1");
+        const dungeon2 = document.getElementById("dungeon-2");
+        const dungeon3 = document.getElementById("dungeon-3");
+        const startImg = document.getElementById("START");
+
+        function hideAllCountdownImages() {
+            dungeon1.style.opacity = 0;
+            dungeon2.style.opacity = 0;
+            dungeon3.style.opacity = 0;
+            startImg.style.opacity = 0;
+
+            dungeon1.style.animation = "none";
+            dungeon2.style.animation = "none";
+            dungeon3.style.animation = "none";
+            startImg.style.animation = "none";
+        }
+
+        function showCountdownImage(img) {
+            hideAllCountdownImages();
+
+            img.style.opacity = 1;
+
+            img.offsetHeight;
+
+            // img.style.animation = "zoomInOut 0.5s forwards";
+        }
+
+        function countdownStart() {
+            showCountdownImage(dungeon3); // 3
+
+            setTimeout(() => {
+                showCountdownImage(dungeon2); // 2
+            }, 1000);
+
+            setTimeout(() => {
+                showCountdownImage(dungeon1); // 1
+            }, 2000);
+
+            setTimeout(() => {
+                showCountdownImage(startImg); // START
+            }, 3000);
+
+            setTimeout(() => {
+                hideAllCountdownImages();
+                go(); // ここでゲーム開始
+            }, 4000);
+        }
+
+        window.addEventListener("load", countdownStart);
+    </script>
 </body>
 </html>
